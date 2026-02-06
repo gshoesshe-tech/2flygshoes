@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Supplier Tracker — Orders</title>
+  <style>
+    :root {
+      --bg: #070b12;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.03);
+      --border: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.62);
+      --accent: #7c4dff;
+      --danger: #ff4d6d;
+      --ok: #21d9a6;
+      --shadow: 0 20px 60px rgba(0,0,0,.55);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh; color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background:
+        radial-gradient(1200px 800px at 40% 30%, rgba(124,77,255,.20), transparent 55%),
+        radial-gradient(1100px 800px at 70% 65%, rgba(33,217,166,.10), transparent 60%),
+        linear-gradient(180deg, #050812 0%, #060a13 40%, #050813 100%);
+      padding: 18px 18px 28px;
+    }
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding: 10px 14px;
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 12px;
+      z-index: 10;
+    }
+    .brand{ display:flex; align-items:center; gap:10px; }
+    .brand .name{ font-weight:900; }
+    .brand .sub{ color:var(--muted); font-size:12px; margin-top:2px; }
+    .right{ display:flex; align-items:center; gap:10px; }
+    .chip{
+      padding: 8px 10px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.20);
+      border-radius: 999px;
+      font-size:12px;
+      color: rgba(255,255,255,.78);
+      max-width: 42vw;
+      overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    }
+    .btn{
+      padding: 9px 12px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color:var(--text);
+      cursor:pointer;
+      font-weight:700;
+    }
+    .btn:hover{ border-color: rgba(124,77,255,.45); }
+    .btn.primary{ background: var(--accent); border-color: transparent; }
+    .btn.danger{ background: rgba(255,77,109,.14); border-color: rgba(255,77,109,.28); }
+    .layout{ display:grid; grid-template-columns: 380px 1fr; gap: 16px; margin-top: 14px; }
+    @media (max-width: 980px){ .layout{ grid-template-columns:1fr; } }
+    .card{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      backdrop-filter: blur(10px);
+    }
+    .sectionTitle{ font-weight:900; margin: 4px 0 10px; }
+    label{ display:block; font-size:12px; color:var(--muted); margin: 10px 0 6px; }
+    input, select, textarea{
+      width:100%;
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 12px;
+      padding: 10px 11px;
+      color:var(--text);
+      outline:none;
+    }
+    textarea{ min-height: 92px; resize: vertical; }
+    input:focus, select:focus, textarea:focus{ border-color: rgba(124,77,255,.55); box-shadow: 0 0 0 4px rgba(124,77,255,.16); }
+    .row2{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    .row2_3{ display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; }
+    .actions{ display:flex; gap:10px; margin-top: 12px; }
+    .muted{ color:var(--muted); font-size:12px; }
+    .msg{ margin-top:10px; color: rgba(255,255,255,.80); font-size:12px; }
+    .err{
+      margin-bottom:12px;
+      border:1px solid rgba(255,77,109,.35);
+      background: rgba(255,77,109,.12);
+      padding:10px 12px;
+      border-radius: 12px;
+      color:#ffd6de;
+      font-size:12px;
+      white-space:pre-wrap;
+      display:none;
+    }
+    .err.show{ display:block; }
+
+    .tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 10px; }
+    .tab{
+      padding: 7px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      cursor:pointer;
+      font-size:12px;
+      font-weight:800;
+      color: rgba(255,255,255,.78);
+    }
+    .tab.active{ background: rgba(124,77,255,.24); border-color: rgba(124,77,255,.40); color:white; }
+    .filters{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom: 10px; }
+    .filters input{ flex: 1 1 280px; }
+    .filters select{ flex: 0 0 180px; }
+
+    ul.list{ list-style:none; padding:0; margin:0; display:grid; gap:10px; }
+    .item{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding: 12px;
+      display:flex;
+      gap:12px;
+      justify-content:space-between;
+      align-items:flex-start;
+    }
+    .titleLine{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    .pill{
+      display:inline-flex; align-items:center; gap:6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      font-size:11px;
+      color: rgba(255,255,255,.78);
+      font-weight:800;
+    }
+    .pill.accent{ border-color: rgba(124,77,255,.42); background: rgba(124,77,255,.18); color:#eae4ff; }
+    .pill.ok{ border-color: rgba(33,217,166,.42); background: rgba(33,217,166,.12); color:#d6fff2; }
+    .pill.bad{ border-color: rgba(255,77,109,.42); background: rgba(255,77,109,.12); color:#ffd6de; }
+
+    .admin{ margin-top: 14px; }
+    .admin.hidden{ display:none; }
+    .kpis{ display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
+    .kpi{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+    .kpi .k{ color:var(--muted); font-size:12px; }
+    .kpi .v{ font-weight:900; font-size:18px; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <div style="font-size:20px">📦</div>
+      <div>
+        <div class="name">Supplier Tracker</div>
+        <div class="sub">Orders (secure login)</div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="chip" id="userChip">Checking session…</div>
+      <button class="btn danger" id="btnLogout" type="button">Logout</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="card">
+      <div class="sectionTitle" id="formTitle">New Order</div>
+      <div class="muted">Drafts save automatically</div>
+      <div id="authError" class="err"></div>
+
+      <form id="orderForm">
+        <label>Customer Name *</label>
+        <input id="customer_name" required placeholder="e.g. Juan Dela Cruz" />
+
+        <label>Facebook Link / Profile</label>
+        <input id="fb_profile" placeholder="facebook.com/profile..." />
+
+        <label>Order Details *</label>
+        <textarea id="order_details" required placeholder="Item code, size, quantity..."></textarea>
+
+        <label>Attachment / Screenshot</label>
+        <input id="attachment" type="file" accept="image/*" />
+
+        <div class="row2">
+          <div>
+            <label>Status</label>
+            <select id="status">
+              <option value="pending">Pending</option>
+              <option value="processing">Processing</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div>
+            <label>Order Date</label>
+            <input id="order_date" type="date" />
+          </div>
+        </div>
+
+        <label>Delivery Method</label>
+        <select id="delivery_method">
+          <option value="jnt">J&T (Courier)</option>
+          <option value="lalamove">Lalamove</option>
+          <option value="walkin">Walk-in</option>
+        </select>
+
+        <div class="row2">
+          <div>
+            <label>Paid for Product (₱)</label>
+            <input id="paid_product" type="number" step="0.01" placeholder="e.g. 1680" />
+          </div>
+          <div>
+            <label>Paid Shipping Fee (₱)</label>
+            <input id="paid_shipping" type="number" step="0.01" placeholder="e.g. 190" />
+          </div>
+        </div>
+
+        <label>Private Notes</label>
+        <textarea id="notes" placeholder="Supplier notes, tracking #, etc."></textarea>
+
+        <div class="actions">
+          <button class="btn primary" id="btnSave" type="submit">Save Order</button>
+          <button class="btn" id="btnClear" type="button">Clear</button>
+        </div>
+        <div class="msg" id="formMsg">—</div>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="tabs" id="tabs">
+        <button class="tab active" type="button" data-tab="all">All</button>
+        <button class="tab" type="button" data-tab="jnt">J&T</button>
+        <button class="tab" type="button" data-tab="lalamove">Lalamove</button>
+        <button class="tab" type="button" data-tab="walkin">Walk-in</button>
+      </div>
+
+      <div class="filters">
+        <input id="search" placeholder="Search name, details, or ID…" />
+        <select id="statusFilter">
+          <option value="all">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="processing">Processing</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+        <select id="dateFilter">
+          <option value="all">All Dates</option>
+        </select>
+        <button class="btn" id="btnRefresh" type="button">Refresh</button>
+        <div class="chip" id="countLabel">0 orders</div>
+      </div>
+
+      <ul class="list" id="orderList"></ul>
+
+      <div class="admin hidden" id="adminOnlyDashboard">
+        <div class="sectionTitle">Admin Dashboard</div>
+        <div class="kpis">
+          <div class="kpi"><div class="k">Total Orders</div><div class="v" id="kpiTotal">0</div></div>
+          <div class="kpi"><div class="k">Total Collected</div><div class="v" id="kpiPaid">₱0</div></div>
+          <div class="kpi"><div class="k">Pending</div><div class="v" id="kpiPending">0</div></div>
+        </div>
+        <div class="muted" style="margin-top:8px">
+          Only emails listed in <code>window.__ADMIN_EMAILS__</code> can see this.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+  // === HARD-CODED CONFIG (edit this) ===
+  window.__SUPABASE_URL__ = "https://ngthitqzqtnvmsthwdl.supabase.co";
+  window.__SUPABASE_ANON_KEY__ = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ndGhpdHF6cXRudm1zdGh3ZGRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkzNjQ5NTEsImV4cCI6MjA4NDk0MDk1MX0.MSC3lSHfazA4vpbM69lwzkzxpws7aiGAQk8oVPTZXNw";
+  window.__ADMIN_EMAILS__ = ["gshoes@gmail.com", "marian@gmail.com", "aron@gmail.com"];
+  window.__ATTACHMENTS_BUCKET__ = "order_attachments";
+</script>
+  <script src="./app.js"></script>
+  <script>
+    window.__PAGE__ = "orders";
+  </script>
+</body>
+</html>

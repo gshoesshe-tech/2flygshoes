@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Supplier Tracker — Login</title>
+  <style>
+    :root {
+      --bg: #070b12;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.04);
+      --border: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.65);
+      --accent: #7c4dff;
+      --danger: #ff4d6d;
+      --shadow: 0 30px 80px rgba(0,0,0,.55);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh; display:grid; place-items:center;
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background:
+        radial-gradient(1200px 800px at 40% 30%, rgba(124,77,255,.20), transparent 55%),
+        radial-gradient(1100px 800px at 70% 65%, rgba(33,217,166,.10), transparent 60%),
+        linear-gradient(180deg, #050812 0%, #060a13 40%, #050813 100%);
+      padding:24px;
+    }
+    .card{
+      width:min(520px, 92vw);
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px 22px 18px;
+      backdrop-filter: blur(10px);
+    }
+    .title{
+      display:flex; align-items:center; gap:10px;
+      font-weight:800; font-size:20px; letter-spacing:.2px;
+      margin:2px 0 10px;
+    }
+    .subtitle{ color:var(--muted); font-size:13px; margin-bottom:16px; }
+    label{ display:block; font-size:12px; color:var(--muted); margin:12px 0 6px; }
+    input{
+      width:100%;
+      background: rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:12px;
+      color:var(--text);
+      padding: 12px 12px;
+      outline:none;
+    }
+    input:focus{ border-color: rgba(124,77,255,.55); box-shadow: 0 0 0 4px rgba(124,77,255,.18); }
+    .btn{
+      width:100%;
+      margin-top:14px;
+      background: var(--accent);
+      border:none;
+      color:white;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .btn:disabled{ opacity:.55; cursor:not-allowed; }
+    .err{
+      margin-top:12px;
+      border:1px solid rgba(255,77,109,.35);
+      background: rgba(255,77,109,.12);
+      padding:10px 12px;
+      border-radius: 12px;
+      color:#ffd6de;
+      font-size:12px;
+      display:none;
+      white-space:pre-wrap;
+    }
+    .hint{ margin-top:12px; color:var(--muted); font-size:12px; }
+    .row{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:12px; }
+    a{ color: rgba(255,255,255,.75); text-decoration:none; font-size:12px; }
+    a:hover{ color:white; text-decoration:underline; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="title">🔒 Supplier Tracker Login</div>
+    <div class="subtitle">Sign in to access orders.</div>
+
+    <form id="loginForm">
+      <label>Email</label>
+      <input id="email" type="email" autocomplete="username" placeholder="you@email.com" required />
+      <label>Password</label>
+      <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" required />
+      <button class="btn" id="btnLogin" type="submit">Login</button>
+      <div class="err" id="authError"></div>
+    </form>
+
+    <div class="hint">
+      Tip: Create users in Supabase → <b>Authentication → Users</b>.
+      <div class="row">
+        <a href="./orderpage.html" id="directLink">(debug) go to orderpage</a>
+        <a href="#" id="clearSession">(debug) clear session</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+  // === HARD-CODED CONFIG (edit this) ===
+  window.__SUPABASE_URL__ = "https://ngthitqzqtnvmsthwdl.supabase.co";
+  window.__SUPABASE_ANON_KEY__ = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ndGhpdHF6cXRudm1zdGh3ZGRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkzNjQ5NTEsImV4cCI6MjA4NDk0MDk1MX0.MSC3lSHfazA4vpbM69lwzkzxpws7aiGAQk8oVPTZXNw";
+  window.__ADMIN_EMAILS__ = ["gshoes@gmail.com", "marian@gmail.com", "aron@gmail.com"];
+  window.__ATTACHMENTS_BUCKET__ = "order_attachments";
+</script>
+  <script src="./app.js"></script>
+  <script>
+    // page mode tells app.js which initializer to run
+    window.__PAGE__ = "login";
+  </script>
+</body>
+</html>
